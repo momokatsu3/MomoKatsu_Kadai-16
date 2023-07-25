@@ -9,7 +9,6 @@ import UIKit
 class ViewController: UIViewController {
 
     // 編集用インデックスパスnadoを設定
-    var selectMode: String = ""
     private var editSelectedIndexPath: IndexPath?
 
     // テーブルビューとのインスタンス変数設定（？？）
@@ -43,19 +42,15 @@ class ViewController: UIViewController {
         // AddItemViewController で追加した内容を表示
         //print("追加内容：'", addEditItemVC.inputName as Any, "'")
 
-        // 追加モードの処理
-        if selectMode == "AddMode" {
-            // 追加した内容を構造体へ追加
-            selectItems.append(ItemValue(name: addEditItemVC.inputName  as Any as! String, check: false))
-            //print("追加入力後のデータ個数：", selectItems.count)
-            //print(selectItems)
+        switch addEditItemVC.mode {
+        case .add:
+            selectItems.append(ItemValue(name: addEditItemVC.inputName, check: false))
+        case .edit:
+            selectItems[editSelectedIndexPath!.row].name = addEditItemVC.inputName
+        case nil:
+            assertionFailure("mode is nil.")
         }
-        // 編集モードの処理
-        if selectMode == "EditMode" {
-            selectItems[editSelectedIndexPath!.row].name = addEditItemVC.inputName  as Any as! String
-            selectItems[editSelectedIndexPath!.row].check = false
-            //print(selectItems)
-        }
+
         //テーブルを再描画
         tableView.reloadData()
     }
@@ -70,13 +65,11 @@ class ViewController: UIViewController {
             switch segue.identifier ?? "" {
             case "AddSegue" :
                 // 遷移先画面を追加モードに設定
-                selectMode = "AddMode"
-                addEditItemVC.mode = AddEditItemViewController.Mode.Add
+                addEditItemVC.mode = AddEditItemViewController.Mode.add
                 break
             case "EditSegue" :
                 // 遷移先画面を編集モードに設定
-                selectMode = "EditMode"
-                addEditItemVC.mode = AddEditItemViewController.Mode.Edit
+                addEditItemVC.mode = AddEditItemViewController.Mode.edit
                 guard let indexPath = sender as? NSIndexPath else { break } //NSIndexPathでエラーの可能性がある
                 addEditItemVC.inputName = selectItems[indexPath.row].name
                 //print(addEditItemVC.inputName as Any, selectItems[indexPath.row].name, selectItems[indexPath.row].check)

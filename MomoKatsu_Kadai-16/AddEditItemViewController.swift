@@ -11,10 +11,10 @@ class AddEditItemViewController: UIViewController {
 
     // 当該クラスが遷移元画面で追加モード画面・編集モード画面を区別するための設定
     enum Mode {
-        case Add, Edit
+        case add, edit
     }
     // mode変数を追加モードに初期化
-    var mode = Mode.Add
+    var mode: Mode?
 
     var inputName: String = ""
 
@@ -38,9 +38,13 @@ class AddEditItemViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // 遷移元画面から編集モードで遷移した場合
-        if mode == .Edit {
+        switch mode {
+        case .add:
+            break
+        case .edit:
             nameTextField.text = inputName
+        case nil:
+            assertionFailure("mode is nil.")
         }
     }
 
